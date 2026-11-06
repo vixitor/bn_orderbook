@@ -1,0 +1,23 @@
+# Editors with EditorConfig support read this file for basic text conventions.
+# Stop searching parent directories for additional .editorconfig files.
+root = true
+
+# Apply these conventions to all files in this directory tree.
+[*]
+charset = utf-8
+end_of_line = lf
+# Keep a newline at the end and remove whitespace at the ends of lines.
+insert_final_newline = true
+trim_trailing_whitespace = true
+# Use two spaces per indentation level rather than tab characters.
+indent_style = space
+indent_size = 2
+
+# Advertise an 80-column target for C/C++ files. Editor support varies;
+# clang-format is the tool that actually reformats C/C++ source layout.
+[*.{cc,cpp,cxx,h,hpp,hxx}]
+max_line_length = 80
+
+# Makefile recipes require literal tabs, so override the general space rule.
+[Makefile]
+indent_style = tab

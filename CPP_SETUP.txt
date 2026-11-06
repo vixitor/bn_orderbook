@@ -1,0 +1,129 @@
+C++ workspace configuration guide
+=================================
+
+This setup connects CMake, clangd, clang-tidy, and clang-format in VS Code.
+The configuration files contain English comments explaining individual settings.
+The program in main.cpp is separate from this setup and has not been edited.
+
+1. Tools and extensions
+-----------------------
+A VS Code extension connects the editor to a tool; it is not necessarily the
+tool executable itself. The extension recommendations are in
+.vscode/extensions.json. They do not install extensions or tools automatically.
+
+The current paths are specific to this Mac:
+  CMake:        /opt/homebrew/bin/cmake
+  clang-format: /opt/homebrew/bin/clang-format
+  clangd:       /usr/bin/clangd
+
+When moving to another machine, update .vscode/settings.json and tasks.json.
+Boost and OpenSSL are development dependencies found by CMake. On another Mac,
+Homebrew can supply them with: brew install boost openssl@3 cmake clang-format
+This command is a setup instruction, not something these files execute.
+
+Open this project directory itself in VS Code, so its .vscode settings apply.
+
+2. How the files fit together
+-----------------------------
+CMakeLists.txt describes the executable, C++20, dependencies, and compiler flags.
+CMakePresets.json defines named Debug and Release configurations.
+CMake generates build/compile_commands.json with actual source compile commands.
+.clangd tells clangd where to read that compilation database.
+.clang-tidy selects static analysis checks and identifier naming rules.
+.clang-format selects the Google formatting preset.
+.editorconfig describes basic text conventions for supporting editors.
+.vscode/settings.json connects tools to the editor and configures save behavior.
+.vscode/tasks.json exposes configure, build, check, and format commands.
+.vscode/extensions.json recommends editor integrations.
+.gitignore excludes generated files from Git; it does not delete those files.
+
+3. CMakePresets.json, explained field by field
+---------------------------------------------
+This file uses strict JSON, which does not allow // or # comments. Its detailed
+explanations live here so that the configuration remains valid for CMake.
+
+version: 3
+  The preset file schema version, not the CMake executable's version.
+cmakeMinimumRequired: { major: 3, minor: 21, patch: 0 }
+  Declare the minimum supported CMake release for these presets.
+configurePresets
+  Named collections of options for the configuration/generation stage.
+name: debug
+  The identifier used by `cmake --preset debug`.
+displayName
+  A human-readable label for editors and preset listings.
+generator: Unix Makefiles
+  Generate Makefile-based build rules. Make builds the program afterward.
+binaryDir: ${sourceDir}/build
+  Put generated files in build/, keeping them separate from source files.
+cacheVariables.CMAKE_BUILD_TYPE: Debug
+  Select the Debug configuration for this single-configuration generator.
+cacheVariables.CMAKE_EXPORT_COMPILE_COMMANDS: ON
+  Export compilation commands so clangd sees the real headers and compiler flags.
+name: release / inherits: debug
+  Start with the Debug preset's options and override the fields listed below it.
+binaryDir: ${sourceDir}/build/release
+  Keep Release outputs separate from Debug outputs.
+cacheVariables.CMAKE_BUILD_TYPE: Release
+  Select the Release configuration, typically including compiler optimization.
+buildPresets
+  Named build-stage options, used by `cmake --build --preset debug` or release.
+configurePreset
+  Associate a build preset with the directory/options of a configure preset.
+
+4. Build and inspect
+---------------------
+Run from this project directory:
+  cmake --preset debug
+  cmake --build --preset debug --parallel
+
+The first command finds dependencies and generates build rules and the database.
+The second compiles and links build/cpp_bn_orderbook; it does not run the program.
+To build Release, substitute release for debug in both commands.
+
+For a read-only language-server check of the current program:
+  /usr/bin/clangd --check=main.cpp --compile-commands-dir=build --clang-tidy --enable-config
+clangd runs supported checks allowed by the fast-check filter. This is not a
+complete audit of all clang-tidy rules or every Google style guideline.
+
+To inspect formatted text without rewriting main.cpp:
+  /opt/homebrew/bin/clang-format --style=file main.cpp
+Adding -i rewrites the file. The VS Code format task deliberately includes -i.
+
+5. Editor behavior and automatic edits
+--------------------------------------
+files.autoSave = onFocusChange saves a modified file when its editor loses focus.
+Moving the mouse alone does not trigger this save. Cmd+S also saves the file.
+editor.formatOnSave = true formats the entire C/C++ file when it is saved.
+Saving also removes trailing whitespace and ensures a final newline.
+These settings can change existing source layout when you edit and save a file.
+To use manual formatting, set editor.formatOnSave to false in the language blocks.
+To use manual saving, set files.autoSave to off.
+
+clangd completion can insert a required #include with --header-insertion=iwyu.
+Naming diagnostics do not rename identifiers automatically. Applying a quick fix
+is a separate editor action. Example: the type alias Tcp follows CamelCase;
+the lowercase alias tcp triggers readability-identifier-naming.
+
+Microsoft C/C++ IntelliSense, formatting, and automatic analysis are disabled in
+this workspace to avoid duplicate providers; its debugger remains available.
+
+6. Useful editor actions
+------------------------
+Terminal > Run Task lists the four tasks in .vscode/tasks.json.
+Cmd+Shift+B runs the default C++ build task and first configures the project.
+The check task prints diagnostics in its terminal; it has no problem matcher.
+The build task parses GCC/Clang compiler messages into the Problems panel.
+After changing editor settings, use Developer: Reload Window if needed.
+If diagnostics remain stale after configuring, use clangd: Restart language server.
+
+7. References
+--------------
+https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html
+https://cmake.org/cmake/help/latest/variable/CMAKE_EXPORT_COMPILE_COMMANDS.html
+https://clangd.llvm.org/config
+https://clang.llvm.org/extra/clang-tidy/
+https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+https://code.visualstudio.com/docs/editing/codebasics
+https://editorconfig.org/
+https://google.github.io/styleguide/cppguide.html

@@ -1,0 +1,10 @@
+# Ignore generated build files and binaries under this project's build directory.
+/build/
+# Ignore local language-server indexes; they can be regenerated.
+/.cache/
+# Ignore a compilation database if one is generated in the source directory.
+/compile_commands.json
+# Keep personal CMake presets and macOS Finder metadata out of version control.
+/CMakeUserPresets.json
+/.DS_Store
+*.log

@@ -1,0 +1,78 @@
+{
+  // VS Code workspace settings use JSON with comments (JSONC).
+  // Open this project directory itself to apply these workspace settings.
+  // A modified file is saved when its editor loses focus, not on mouse movement.
+  // Saving a C/C++ file also runs the formatter configured below.
+  "files.autoSave": "onFocusChange",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "files.eol": "\n",
+  "[cpp]": {
+    // Extension ID of the formatter; the executable path is configured below.
+    "editor.defaultFormatter": "xaver.clang-format",
+    "editor.formatOnSave": true,
+    // Reformat the whole file, including unchanged lines, whenever it is saved.
+    "editor.formatOnSaveMode": "file",
+    // Keep two-space indentation instead of inferring it from existing content.
+    "editor.detectIndentation": false,
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    // Draw a guide at column 80; the guide itself does not wrap text.
+    "editor.rulers": [80]
+  },
+  "[c]": {
+    // Apply the same formatting and indentation behavior to C files.
+    "editor.defaultFormatter": "xaver.clang-format",
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file",
+    "editor.detectIndentation": false,
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.rulers": [80]
+  },
+  // Treat these extensions as C++ so that the C++ language settings apply.
+  "files.associations": {
+    "*.h": "cpp",
+    "*.hpp": "cpp",
+    "*.hxx": "cpp",
+    "*.cc": "cpp",
+    "*.cxx": "cpp"
+  },
+  // Machine-specific path to the Homebrew clang-format executable.
+  "clang-format.executable": "/opt/homebrew/bin/clang-format",
+  // Read .clang-format; use Google only when no style file is found.
+  "clang-format.style": "file",
+  "clang-format.fallbackStyle": "Google",
+  // Use the same stable Homebrew LLVM toolchain as the Debug ASan build.
+  "clangd.path": "/opt/homebrew/opt/llvm/bin/clangd",
+  "clangd.arguments": [
+    "--background-index",          // Index project symbols for navigation.
+    "--clang-tidy",                // Enable supported clang-tidy diagnostics.
+    "--enable-config",             // Read .clangd project configuration.
+    "--completion-style=detailed", // Show detailed completion candidates.
+    "--header-insertion=iwyu",      // Completion may insert a needed #include.
+    "--fallback-style=Google"       // Fallback for clangd's own formatting.
+  ],
+  // Used only without a usable compile command; this supplies no dependency paths.
+  "clangd.fallbackFlags": ["-std=c++20"],
+  // Let clangd and clang-format provide these features without duplicate reports
+  // from Microsoft's C/C++ extension. Its debugger is not disabled here.
+  "C_Cpp.intelliSenseEngine": "disabled",
+  "C_Cpp.formatting": "disabled",
+  "C_Cpp.codeAnalysis.runAutomatically": false,
+  // CMake Tools reads the named configurations in CMakePresets.json.
+  "cmake.useCMakePresets": "always",
+  "cmake.configureOnOpen": true,
+  // With presets enabled, each preset's binaryDir determines its build directory.
+  "cmake.buildDirectory": "${workspaceFolder}/build",
+  // Avoid watching generated files that change frequently during builds/indexing.
+  "files.watcherExclude": {
+    "**/build/**": true,
+    "**/.cache/clangd/**": true
+  },
+  // Hide generated content from normal text search; source files remain searchable.
+  "search.exclude": {
+    "build": true,
+    ".cache": true
+  }
+}
