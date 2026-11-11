@@ -1,9 +1,0 @@
-{
-  // Recommended extensions, not automatic installations of extensions or tools.
-  "recommendations": [
-    "llvm-vs-code-extensions.vscode-clangd", // Connect VS Code to clangd.
-    "xaver.clang-format",                 // Invoke the clang-format executable.
-    "ms-vscode.cmake-tools",              // Configure/build through CMake presets.
-    "editorconfig.editorconfig"           // Apply .editorconfig text conventions.
-  ]
-}

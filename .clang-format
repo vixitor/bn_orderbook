@@ -1,5 +1,0 @@
-# Read by clang-format when invoked with --style=file, including VS Code saves.
-# The Google preset supplies indentation, spacing, brace layout, and wrapping.
-# Its 80-column limit is a formatting target, not an absolute guarantee.
-# This tool changes layout; it does not enforce identifier naming conventions.
-BasedOnStyle: Google
